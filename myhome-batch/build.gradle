@@ -1,0 +1,62 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'groovy'
+}
+
+group = 'com.mklee'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+ext {
+	// 아래 링크에서 spring boot version 과 호환되는 버전 체크
+	// https://spring.io/projects/spring-cloud
+	springCloudVersion = '2020.0.3'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.6.RELEASE'
+
+	implementation 'org.springframework.boot:spring-boot-starter'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.12.4'
+
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test") {
+		exclude module: "junit" // JUnit4 제거, 스프링 부트 2.2.0 부터 JUnit5 적용
+	}
+	testImplementation("org.junit.jupiter:junit-jupiter-api")
+	testImplementation("org.junit.jupiter:junit-jupiter-params")
+	testCompileOnly('junit:junit')
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+	testRuntimeOnly('org.junit.vintage:junit-vintage-engine') // spock 에 junit4 dependencies 가 있어 추가 필요한것으로 보임
+
+	testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-groovy-3.0'
+	testImplementation group: 'org.spockframework', name: 'spock-spring', version: '2.0-groovy-3.0'
+	testImplementation("org.codehaus.groovy:groovy-test")
+}
+
+test {
+	useJUnitPlatform()
+}
